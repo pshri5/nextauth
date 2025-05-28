@@ -37,15 +37,16 @@ export async function POST(request: NextRequest) {
 
         //send verification email
 
-        await sendEmail({ email, emailType: "VERIFY", userId: savedUser._id })
+        try {
+            await sendEmail({ email, emailType: "VERIFY", userId: savedUser._id });
+        } catch (mailErr) {
+            console.warn("Verification email failed:", mailErr);
+        }
 
-        return NextResponse.json({
-            message: "User created successfully",
-            success: true,
-            savedUser
-        })
-
-
+        return NextResponse.json(
+            { message: "User created successfully", success: true, savedUser },
+            { status: 201 }
+        );
 
 
     } catch (error: any) {
